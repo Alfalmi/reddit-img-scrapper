@@ -9,12 +9,14 @@ from utils.create_token import create_token
 
 POST_SEARCH_AMOUNT = 5
 
+
 # Create directory if it doesn't exist to save images
 def create_folder(image_path):
     CHECK_FOLDER = os.path.isdir(image_path)
     # If folder doesn't exist, then create it.
     if not CHECK_FOLDER:
         os.makedirs(image_path)
+
 
 # Path to save images
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -30,15 +32,14 @@ if os.path.exists('token.pickle'):
         creds = pickle.load(token)
 else:
     creds = create_token()
-    pickle_out = open("token.pickle","wb")
+    pickle_out = open("token.pickle", "wb")
     pickle.dump(creds, pickle_out)
 
 reddit = praw.Reddit(client_id=creds['client_id'],
-                    client_secret=creds['client_secret'],
-                    user_agent=creds['user_agent'],
-                    username=creds['username'],
-                    password=creds['password'])
-
+                     client_secret=creds['client_secret'],
+                     user_agent=creds['user_agent'],
+                     username=creds['username'],
+                     password=creds['password'])
 
 f_final = open("sub_list.csv", "r")
 img_notfound = cv2.imread('imageNF.png')
@@ -56,7 +57,7 @@ for line in f_final:
                 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
                 # Could do transforms on images like resize!
-                compare_image = cv2.resize(image,(224,224))
+                compare_image = cv2.resize(image, (224, 224))
 
                 # Get all images to ignore
                 for (dirpath, dirnames, filenames) in os.walk(ignore_path):
@@ -74,8 +75,7 @@ for line in f_final:
                 if not ignore_flag:
                     cv2.imwrite(f"{image_path}{sub}-{submission.id}.png", image)
                     count += 1
-                    
+
             except Exception as e:
                 print(f"Image failed. {submission.url.lower()}")
                 print(e)
-        
